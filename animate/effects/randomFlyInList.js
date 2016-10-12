@@ -22,7 +22,7 @@ px.import({
 
             // render all the animation in the list and afterward invoke the callback
             if (index < uiImageList.length) {
-
+				uiImageList[index].config.rotation=config.rotation;
                 // TODO - nice to have pre-loading of a certain set of images prior
                 randomFlyIn(uiImageList[index],scene,function(uiImage){
 

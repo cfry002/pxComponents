@@ -48,6 +48,10 @@ px.import({
                 // amount of jagged edges (45 degrees is not an ideal value for 
                 // viewing photos)
                 var rotation = math.randomIntFromList([-15,11])
+                // Support turning off rotation 
+                if( uiImage.config.rotation == 0) {
+                  rotation = 0;
+                }
 
                 x = math.randomInt(50,scene.root.w - polaroidWidth - (sidePadding*2))
 
@@ -57,7 +61,7 @@ px.import({
 
                 // if the angle rotation is positive the bottom of the polaroid may be cropped,
                 // therefore adjust the ymin and ymax
-                if (rotation > 0) {
+                if (rotation >= 0) {
                     ymin = 0
                     ymax = topPadding
                 }
