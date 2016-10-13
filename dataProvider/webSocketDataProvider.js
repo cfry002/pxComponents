@@ -58,7 +58,7 @@ px.import({
             });
             mySocket.on('close', function() {
                 console.log('done requests')
-                console.log(returnMsg)
+                //console.log(returnMsg)
                 resolve(returnMsg)
                 console.log('closing socket');
             });
