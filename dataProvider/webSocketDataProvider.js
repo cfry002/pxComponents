@@ -33,7 +33,7 @@ px.import({
             var mySocket = new ws(websocketUrl)
 
             mySocket.on('open', function() {
-                // console.log('recvd open')            // comment out to prevent noise
+                console.log('recvd open')            // comment out to prevent noise
                 if (Array.isArray(requests)) {
                     returnMsg = []
                     for (var k = 0; k < requests.length; k++) {
@@ -41,7 +41,7 @@ px.import({
                         mySocket.send(json)
                     }
                 } else {
-                    console.log('single send - ' + requests)
+                    //console.log('single send - ' + requests)
                     mySocket.send(requests)
                 }
             });
@@ -57,11 +57,14 @@ px.import({
                 }
             });
             mySocket.on('close', function() {
-                console.log('done requests')
+                //console.log('done requests')
                 //console.log(returnMsg)
                 resolve(returnMsg)
-                console.log('closing socket');
+                //console.log('closing socket');
             });
+          mySocket.on('error', function(msg) {
+            console.log('ERROR on socket: '+msg);
+          });
         });
     }
 }).catch( function(err){
