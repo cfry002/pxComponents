@@ -25,14 +25,27 @@ px.import({
     // requests contents of a dataservice via a websocket
     module.exports =  function(requests,websocketUrl) {
 
-        return new Promise(function(resolve,reject) {
+      // Function vars
+      var open, message, close, error;
+      
+      var mySocket = new ws(websocketUrl);
+      
+      var removeListeners = function() {
+        console.log("removing ws listeners");
+        mySocket.removeListener('open', open);
+        mySocket.removeListener('message', message);
+        mySocket.removeListener('close', close);
+        mySocket.removeListener('error', error);
+      } 
+      console.log("done opening ws");
+      var promise = new Promise(function(resolve,reject) {
 
             var returnMsg
 
-            console.log("about to try opening ws for url "+requests)
-            var mySocket = new ws(websocketUrl)
+            //console.log("about to try opening ws for url "+requests)
+            //var mySocket = new ws(websocketUrl)
 
-            mySocket.on('open', function() {
+            open = function() {
                 console.log('recvd open')            // comment out to prevent noise
                 if (Array.isArray(requests)) {
                     returnMsg = []
@@ -44,8 +57,8 @@ px.import({
                     //console.log('single send - ' + requests)
                     mySocket.send(requests)
                 }
-            });
-            mySocket.on('message', function(message) {
+            }
+            message = function(message) {
                 // console.log('received: %s', message) // comment out to prevent noise
                 if (Array.isArray(returnMsg) && returnMsg.length >= 0) {
                     returnMsg.push(message)
@@ -55,17 +68,27 @@ px.import({
                     returnMsg = message
                     mySocket.close()
                 }
-            });
-            mySocket.on('close', function() {
+            }
+            close = function() {
                 //console.log('done requests')
                 //console.log(returnMsg)
                 resolve(returnMsg)
                 //console.log('closing socket');
-            });
-          mySocket.on('error', function(msg) {
-            console.log('ERROR on socket: '+msg);
-          });
+            }
+            error = function(msg) {
+              console.log('ERROR on socket: '+msg);
+            }
+          mySocket.on('open', open);
+          mySocket.on('message', message);
+          mySocket.on('close', close);
+          mySocket.on('error', error); 
         });
+
+    return {
+              wsSocket : mySocket,
+              dataPromise : promise,
+              cleanup : removeListeners
+              }
     }
 }).catch( function(err){
     console.error("Error on Grid : ")
